@@ -1,18 +1,20 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'url_shortener',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 const connectDB = async () => {
   try {
-    const client = await pool.connect();
+    await pool.query('SELECT 1');
     console.log('Database connected successfully');
-    client.release();
+
+    const { initTable } = require('../repository/user.repository');
+    await initTable();
   } catch (err) {
     console.error('Database connection failed:', err.message);
   }
