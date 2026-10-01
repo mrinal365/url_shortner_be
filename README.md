@@ -228,7 +228,84 @@ Fetches the authenticated user's profile using the Bearer token.
     "name": "Admin User",
     "email": "admin@example.com",
     "created_at": "2026-09-30T04:30:00.000Z"
-  }
+---
+
+### 5. Shorten Long URL
+
+Shortens a long URL to a unique 7-character Base62 string (a-z, A-Z, 0-9).
+
+- **URL**: `/api/shorten`
+- **Method**: `POST`
+- **Auth Required**: Yes (`Bearer <token>`)
+- **Headers**:
+  - `Authorization: Bearer <token>`
+  - `Content-Type: application/json`
+
+**Request Body:**
+```json
+{
+  "originalUrl": "https://example.com/very/long/path/to/resource"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "e9b2c3d4-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+  "user_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "original_url": "https://example.com/very/long/path/to/resource",
+  "short_code": "aK9xZ2m",
+  "clicks": 0,
+  "created_at": "2026-10-01T02:40:00.000Z",
+  "shortUrl": "http://localhost:5000/api/urls/aK9xZ2m"
+}
+```
+
+---
+
+### 6. Redirect / Retrieve Original URL
+
+Fetches original URL and increments click count. In browser it redirects (302), and when requested with `Accept: application/json` or `?redirect=false` it returns JSON.
+
+- **URL**: `/api/urls/:code`
+- **Method**: `GET`
+- **Auth Required**: Yes (`Bearer <token>`)
+- **Headers**: `Authorization: Bearer <token>`
+
+**Response (200 OK - JSON Mode):**
+```json
+{
+  "originalUrl": "https://example.com/very/long/path/to/resource",
+  "shortCode": "aK9xZ2m",
+  "clicks": 1
+}
+```
+
+---
+
+### 7. Get My Shortened URLs
+
+Fetches all URLs shortened by the logged-in user in descending order.
+
+- **URL**: `/api/urls`
+- **Method**: `GET`
+- **Auth Required**: Yes (`Bearer <token>`)
+- **Headers**: `Authorization: Bearer <token>`
+
+**Response (200 OK):**
+```json
+{
+  "urls": [
+    {
+      "id": "e9b2c3d4-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      "user_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "original_url": "https://example.com/very/long/path/to/resource",
+      "short_code": "aK9xZ2m",
+      "clicks": 5,
+      "created_at": "2026-10-01T02:40:00.000Z",
+      "shortUrl": "http://localhost:5000/api/urls/aK9xZ2m"
+    }
+  ]
 }
 ```
 

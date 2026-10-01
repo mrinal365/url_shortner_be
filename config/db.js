@@ -13,8 +13,11 @@ const connectDB = async () => {
     await pool.query('SELECT 1');
     console.log('Database connected successfully');
 
-    const { initTable } = require('../repository/user.repository');
-    await initTable();
+    const { initTable: initUserTable } = require('../repository/user.repository');
+    await initUserTable();
+
+    const { initTable: initUrlTable } = require('../repository/url.repository');
+    await initUrlTable();
   } catch (err) {
     console.error('Database connection failed:', err.message);
   }
