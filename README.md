@@ -124,6 +124,57 @@ The server will be available at: `http://localhost:5000`
 
 ---
 
+## 📖 Interactive Swagger API Documentation
+
+Interactive Swagger UI is integrated and runs out-of-the-box!
+
+- **Swagger UI**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs) (also available via `/docs` or `/swagger`)
+- **Raw OpenAPI Spec (JSON)**: [http://localhost:5000/api-docs.json](http://localhost:5000/api-docs.json)
+- **Export OpenAPI Spec**: `npm run docs:export`
+
+### 🔒 Authorizing in Swagger UI
+1. Execute `POST /api/auth/signup` or `POST /api/auth/login` right in Swagger UI using **Try it out**.
+2. Copy the `token` string from the JSON response.
+3. Click the green **Authorize 🔓** button in the top-right corner.
+4. Enter `Bearer <your_token>` (or just `<your_token>`) and click **Authorize**.
+5. Swagger UI persists your authorization across page reloads so you can test all protected endpoints!
+
+### ⚡ Clean & Modular Documentation Architecture
+Route files stay 100% clean and readable without hundreds of lines of YAML comments. All API documentation is modularized in the `docs/` directory:
+
+```text
+docs/
+├── index.js          # Auto-loader that aggregates all *.doc.js files
+├── schemas.js        # Reusable OpenAPI schemas (User, UrlItem, etc.)
+├── auth.doc.js       # Auth endpoint specs (/api/auth/signup, /login, /me)
+├── urls.doc.js       # URL endpoint specs (/api/shorten, /urls/:code, /urls)
+└── system.doc.js     # Health check endpoint spec (/health)
+```
+
+- **Auto-Discovery**: Whenever you add a new route in `routes/*.js`, Swagger dynamically discovers it on the next browser refresh and lists it under its section with full interactive testing support—with zero config needed!
+- **Modular Customization**: To customize request bodies, descriptions, and responses for your APIs, simply add or edit the endpoint in `docs/<module>.doc.js`:
+
+```javascript
+// docs/analytics.doc.js
+module.exports = {
+  tags: [{ name: 'Analytics', description: 'URL traffic analytics' }],
+  paths: {
+    '/api/analytics': {
+      get: {
+        tags: ['Analytics'],
+        summary: 'Get user URL analytics',
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Analytics data retrieved' },
+        },
+      },
+    },
+  },
+};
+```
+
+---
+
 ## 📡 API Reference
 
 Base URL: `http://localhost:5000`
